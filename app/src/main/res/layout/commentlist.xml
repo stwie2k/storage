@@ -12,7 +12,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="10dp"
-        app:srcCompat="@android:drawable/checkbox_on_background"
+        android:src="@drawable/me"
         tools:layout_editor_absoluteX="16dp" />
 
     <LinearLayout
@@ -44,6 +44,24 @@
             android:layout_margin="5dp"
             android:text="TextView" />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+        <ImageView
+            android:id="@+id/star"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/white"
+            tools:layout_editor_absoluteX="16dp" />
     </LinearLayout>
 
 

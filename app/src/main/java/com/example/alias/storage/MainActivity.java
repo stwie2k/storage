@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
@@ -26,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     EditText username;
     EditText password1;
     EditText password2;
+    ImageView pic;
     public List<Map<String, String>> datas = new ArrayList<Map<String, String>>();
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +40,13 @@ public class MainActivity extends AppCompatActivity {
 
         UpdateInfo();
 
-       username=findViewById(R.id.name);
-       password1=findViewById(R.id.p1);
-       password2=findViewById(R.id.p2);
+        username=findViewById(R.id.name);
+        password1=findViewById(R.id.p1);
+        password2=findViewById(R.id.p2);
+        pic=findViewById(R.id.picture);
+
+
+
 
         Button ok=findViewById(R.id.ok);
         Button clear=findViewById(R.id.clear);
@@ -53,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if(status.equals("Login"))
                 {
-                    password2.setVisibility(View.INVISIBLE);
-
+                    password2.setVisibility(View.GONE);
+                    pic.setVisibility(View.GONE);
 
                 }
                 else{
                     password2.setVisibility(View.VISIBLE);
+                    pic.setVisibility(View.VISIBLE);
                 }
 
 
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
-              public void onClick(View v) {
+            public void onClick(View v) {
                 String un=username.getText().toString();
                 String p1 = password1.getText().toString();
                 String p2 = password2.getText().toString();
@@ -119,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Intent intent = new Intent(MainActivity.this, Comment.class);
+                    intent.putExtra("name",un);
                     MainActivity.this.startActivity(intent);
 
 
@@ -139,8 +150,21 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("name", un);
+                    map.put("password", p1);
+
+                    datas.add(map);
 
 
+                    String ur;
+                   if(uri==null)
+                   {
+                       ur="";
+                   }
+                   else{
+                       ur=uri.toString();
+                   }
 
                     myDB Db = new myDB(getBaseContext());
                     SQLiteDatabase db = Db.getWritableDatabase();
@@ -148,9 +172,16 @@ public class MainActivity extends AppCompatActivity {
                     ContentValues cv = new ContentValues();
                     cv.put("name", un);
                     cv.put("password", p1);
-                    db.insert("table_name", null, cv);
+                    cv.put("uri",ur);
+
+
+                    db.insert("User", null, cv);
                     db.close();
 
+
+
+
+                    Toast.makeText(MainActivity.this, "Register successfully", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -158,7 +189,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        pic.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent();
 
+                intent.setAction(Intent.ACTION_PICK);
+
+                intent.setType("image/*");
+
+                startActivityForResult(intent, 0);
+            }
+        });
+
+
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username.setText("");
+                password1.setText("");
+                password2.setText("");
+            }
+        });
 
 
 
@@ -171,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
         SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select * from "
-                +"table_name", null);
+                +"User", null);
         datas  = new ArrayList<Map<String, String>>();
         if (cursor == null) {
         } else {
@@ -187,6 +239,41 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+
+
     }
+    @Override
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (data != null) {
+
+            // 得到图片的全路径
+
+            uri = data.getData();
+
+
+
+            //图片缩放的实现，请看：https://blog.csdn.net/reality_jie_blog/article/details/16891095
+
+          this.pic.setImageURI(uri);
+
+
+
+//            获取图片的缩略图，可能为空！
+//
+//             Bitmap bitmap = data.getParcelableExtra("data");
+//
+//             this.pic.setImageBitmap(bitmap);
+
+
+
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+
 
 }

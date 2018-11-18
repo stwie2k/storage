@@ -5,7 +5,7 @@
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="500dp">
         <ListView
             android:id="@+id/lw"
             android:layout_width="match_parent"
@@ -18,10 +18,12 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
         <EditText
+            android:id="@+id/co"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="adv"/>
+            android:hint="Comment"/>
         <Button
+            android:id="@+id/send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="send"/>
