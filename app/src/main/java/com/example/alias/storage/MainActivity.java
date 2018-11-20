@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent = new Intent();
 
-                intent.setAction(Intent.ACTION_PICK);
+                intent.setAction(Intent.ACTION_OPEN_DOCUMENT );
 
                 intent.setType("image/*");
 
@@ -251,6 +252,9 @@ public class MainActivity extends AppCompatActivity {
             // 得到图片的全路径
 
             uri = data.getData();
+
+
+
 
 
 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Comment extends AppCompatActivity {
 
@@ -39,6 +40,7 @@ public class Comment extends AppCompatActivity {
 
     SimpleAdapter simpleAdapter;
     String currentuser;
+    MyAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -58,8 +60,8 @@ public class Comment extends AppCompatActivity {
         temp.put("comment","Haha");
 //        data.add(temp);
 
-        ListView listView=findViewById(R.id.lw);
-        final MyAdapter adapter = new MyAdapter(Comment.this, data);
+        final ListView listView=findViewById(R.id.lw);
+          adapter = new MyAdapter(Comment.this, data);
 
        final  AlertDialog dialog = new AlertDialog.Builder(this).create();//创建对话框
 
@@ -148,6 +150,14 @@ public class Comment extends AppCompatActivity {
                                     + " where CID = ?", new String[]{id});
                             sqLiteDatabase.close();
 
+                            myDB db1 = new myDB(getBaseContext());
+                            SQLiteDatabase sqLiteDatabase2 = db1.getWritableDatabase();
+                            sqLiteDatabase2.execSQL("delete from " + "Star"
+                                    + " where CID = ?", new String[]{id});
+                            sqLiteDatabase2.close();
+
+
+
                             data.remove(position);
 
                             adapter.notifyDataSetChanged();
@@ -190,10 +200,12 @@ public class Comment extends AppCompatActivity {
             @Override
             public void onChangeClick(View v,int i) {
 
+
+
                 ImageView imageView = (ImageView)v;
                 String co=data.get(i).get("starnum");
                int num=Integer.parseInt(co);
-               UpdateInfo();
+//            UpdateInfo();
 
                 String id=data.get(i).get("id");
 
@@ -214,24 +226,27 @@ public class Comment extends AppCompatActivity {
                      myDB Db = new myDB(getBaseContext());
                      SQLiteDatabase db = Db.getWritableDatabase();
 
-//                     ContentValues cv = new ContentValues();
-//
-//                     cv.put("username", name);
-//                     cv.put("CID", id);
-//
-//                     db.insert("Star", null, cv);
 
-//                     String insert_sql = "";
-                     db.execSQL("INSERT INTO Star (CID, username) values (? ,?)",new String[]{id,name});
+                     db.execSQL("INSERT INTO Star (CID, username) values (? ,?)",new String[]{id,currentuser});
 
 
                      db.close();
 
+                     List<Map<String, String>> newdata = new ArrayList<Map<String, String>>();
 
+
+
+                     data.get(i).put("starnum",String.valueOf(num));
 
                      data.get(i).put("status","1");
-                     data.get(i).put("starnum",String.valueOf(num));
+
+
+
+
+
+
                      adapter.notifyDataSetChanged();
+
 
                  }
                  else{
@@ -248,10 +263,20 @@ public class Comment extends AppCompatActivity {
                      data.get(i).put("status","0");
                      data.get(i).put("starnum",String.valueOf(num));
 
+
+
+
+
+
                      adapter.notifyDataSetChanged();
+
             }
 
-            myDB db = new myDB(getBaseContext());
+
+
+
+
+                myDB db = new myDB(getBaseContext());
             SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
                 sqLiteDatabase.execSQL("update " + "Comment" +
                         " set starnum = ? where CID = ?", new Object[]{
@@ -284,13 +309,7 @@ public class Comment extends AppCompatActivity {
                 String date=simpleDateFormat.format(da);
 
 
-                Map<String,String>temp = new LinkedHashMap<>();
-                temp.put("name",currentuser);
-                temp.put("date",date);
-                temp.put("comment",com);
-                temp.put("starnum","0");
-                temp.put("status","0");
-                data.add(temp);
+
 
 
 
@@ -303,8 +322,26 @@ public class Comment extends AppCompatActivity {
                 cv.put("date", date);
                 cv.put("starnum",0);
 
-                db.insert("Comment", null, cv);
+                long id= db.insert("Comment", null, cv);
+
+
+
+
                 db.close();
+
+                Map<String,String>temp = new LinkedHashMap<>();
+                temp.put("name",currentuser);
+                temp.put("date",date);
+                temp.put("comment",com);
+                temp.put("starnum","0");
+                temp.put("status","0");
+                temp.put("id",String.valueOf(id));
+                data.add(temp);
+
+
+
+
+
 
                 adapter.notifyDataSetChanged();
 
@@ -326,14 +363,14 @@ public class Comment extends AppCompatActivity {
         if (cursor == null) {
         } else {
             while (cursor.moveToNext()) {
-                String commentid=cursor.getString(0);
+                int commentid=cursor.getInt(0);
                 String comment = cursor.getString(1);
                 String user=cursor.getString(2);
                 String date=cursor.getString(3);
                 int starnum=cursor.getInt(4);
 
                 Map<String, String> map = new HashMap<String, String>();
-                map.put("id",commentid);
+                map.put("id",String.valueOf(commentid));
                 map.put("comment", comment);
                 map.put("name", user);
                 map.put("date", date);

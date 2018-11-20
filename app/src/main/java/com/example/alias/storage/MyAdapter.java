@@ -63,14 +63,22 @@ public class MyAdapter extends BaseAdapter {
         viewHolder.mUsername.setText(mList.get(i).get("name"));
 
         viewHolder.mDate.setText(mList.get(i).get("date"));
-       String status=mList.get(i).get("status");
+
+        String s=mList.get(i).get("starnum");
+
+        viewHolder.mCount.setText(s);
+
+        String status=mList.get(i).get("status");
        if(status.equals("1"))
        {
            viewHolder.mStar.setImageResource(R.drawable.red);
        }
+       else
+       {
+           viewHolder.mStar.setImageResource(R.drawable.white);
+       }
 
-        String n=mList.get(i).get("starnum");
-        viewHolder.mCount.setText(n);
+
 
         String username=mList.get(i).get("name");
 
@@ -86,9 +94,19 @@ public class MyAdapter extends BaseAdapter {
 
 
                 String uri=cursor.getString(3);
-                Uri u=Uri.parse(uri);
 
-//                viewHolder.mPicture.setImageURI(u);
+                if(uri.equals(""))
+                {
+                    viewHolder.mPicture.setImageResource(R.drawable.me);
+                }
+                else
+                {
+                    Uri u=Uri.parse(uri);
+
+                    viewHolder.mPicture.setImageURI(u);
+                }
+
+
 
             }
 
